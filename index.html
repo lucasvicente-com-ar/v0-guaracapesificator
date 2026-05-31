@@ -306,6 +306,51 @@
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .spinning { animation: spin 1s linear infinite; }
 
+    /* Glitch effect for divider texts */
+    @keyframes glitch {
+      0%, 78%, 100% { text-shadow: none; transform: none; opacity: 1; }
+      79% { text-shadow: -2px 0 #ff0040, 2px 0 var(--cyan); transform: translateX(2px); }
+      80% { text-shadow: 2px 0 #ff0040, -2px 0 var(--cyan); transform: translateX(-2px); opacity: 0.85; }
+      81% { text-shadow: none; transform: skewX(10deg); }
+      82% { text-shadow: -1px 0 var(--cyan); transform: translateX(1px); }
+      83% { text-shadow: none; transform: none; opacity: 1; }
+      84% { text-shadow: 2px 0 #ff0040; transform: translateX(-1px); opacity: 0.9; }
+      85% { text-shadow: none; transform: none; opacity: 1; }
+    }
+
+    /* Pulsing glow for divider texts */
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.45; letter-spacing: 0.35em; }
+      50%       { opacity: 0.85; letter-spacing: 0.42em; text-shadow: 0 0 10px var(--cyan); }
+    }
+
+    /* Scanning light along divider lines */
+    @keyframes scanBeam {
+      0%   { left: -30%; opacity: 0; }
+      5%   { opacity: 1; }
+      95%  { opacity: 1; }
+      100% { left: 130%; opacity: 0; }
+    }
+
+    .divider-line { position: relative; overflow: hidden; }
+    .divider-line::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: -30%;
+      width: 25%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      animation: scanBeam 3s ease-in-out infinite;
+    }
+
+    #div-cotiz {
+      animation: glitch 6s infinite, glowPulse 3s ease-in-out infinite;
+    }
+    #div-conv {
+      animation: glitch 6s 2.5s infinite, glowPulse 3s 1.5s ease-in-out infinite;
+    }
+
     /* Scanline overlay (subtle, dark mode only) */
     .scanlines {
       position: fixed;
@@ -354,7 +399,7 @@
       <!-- Cotización divider -->
       <div class="divider" style="margin-bottom:1.1rem">
         <div class="divider-line"></div>
-        <span class="divider-text">Cotización</span>
+        <span class="divider-text" id="div-cotiz">Cotización</span>
         <div class="divider-line"></div>
       </div>
 
@@ -391,7 +436,7 @@
       <!-- Divider -->
       <div class="divider">
         <div class="divider-line"></div>
-        <span class="divider-text">Convertidor</span>
+        <span class="divider-text" id="div-conv">Convertidor</span>
         <div class="divider-line"></div>
       </div>
 
