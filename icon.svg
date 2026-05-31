@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#04040f"/>
+  <rect x="22" y="22" width="468" height="468" fill="none" stroke="#00d4ff" stroke-width="3" rx="50" opacity="0.6"/>
+  <rect x="34" y="34" width="444" height="444" fill="none" stroke="#00d4ff" stroke-width="1" rx="42" opacity="0.2"/>
+  <line x1="0" y1="171" x2="512" y2="171" stroke="#00d4ff" stroke-width="0.6" opacity="0.12"/>
+  <line x1="0" y1="341" x2="512" y2="341" stroke="#00d4ff" stroke-width="0.6" opacity="0.12"/>
+  <line x1="171" y1="0" x2="171" y2="512" stroke="#00d4ff" stroke-width="0.6" opacity="0.12"/>
+  <line x1="341" y1="0" x2="341" y2="512" stroke="#00d4ff" stroke-width="0.6" opacity="0.12"/>
+  <path d="M62,62 L96,62 M62,62 L62,96" stroke="#00d4ff" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M450,62 L416,62 M450,62 L450,96" stroke="#00d4ff" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M62,450 L96,450 M62,450 L62,416" stroke="#00d4ff" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M450,450 L416,450 M450,450 L450,416" stroke="#00d4ff" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <text x="256" y="318" font-family="'Courier New',monospace" font-size="230" font-weight="900" text-anchor="middle" fill="#00d4ff" opacity="0.25" filter="url(#glow)">GP</text>
+  <text x="256" y="318" font-family="'Courier New',monospace" font-size="230" font-weight="900" text-anchor="middle" fill="#00d4ff">GP</text>
+</svg>

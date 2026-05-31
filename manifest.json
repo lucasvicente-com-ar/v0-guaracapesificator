@@ -1,0 +1,24 @@
+{
+  "name": "Guaraca Pesificator",
+  "short_name": "Guaraca",
+  "description": "Intercambiador Galáctico de Divisas PYG · ARS · USD",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#04040f",
+  "theme_color": "#00d4ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
