@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Convertidor de monedas en tiempo real entre Guaraníes Paraguayos (PYG), Pesos Argentinos (ARS) y Dólares Estadounidenses (USD). Tasas actualizadas automáticamente.">
+  <title>Guaraca Pesificator - Convertidor de Monedas PYG/ARS/USD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .animate-spin { animation: spin 1s linear infinite; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+
+  <div class="w-full max-w-sm">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-xl font-semibold text-gray-800 tracking-tight">Guaraca Pesificator</h1>
+      <p class="text-xs text-gray-400 mt-1">Convertidor PYG · ARS · USD</p>
+    </div>
+
+    <!-- Content -->
+    <div class="space-y-5">
+
+      <!-- PYG Rate -->
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <label for="pyg-rate" class="text-xs font-medium text-gray-500 uppercase tracking-wide">
+            Guaraníes / USD
+          </label>
+          <button id="btn-pyg" onclick="fetchUSDPYG()"
+            class="text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-40 p-1">
+            <svg id="icon-pyg" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+              <path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+              <path d="M8 16H3v5"/>
+            </svg>
+          </button>
+        </div>
+        <input id="pyg-rate" type="number" inputmode="decimal" placeholder="—"
+          class="w-full bg-white border border-gray-200 rounded-lg text-gray-800 text-2xl font-light text-center h-14 outline-none focus:border-gray-400 transition-colors px-3"
+          oninput="onRateChange('pyg', this.value)"
+          onkeydown="handleNumericInput(event)">
+      </div>
+
+      <!-- ARS Rate -->
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <label for="ars-rate" class="text-xs font-medium text-gray-500 uppercase tracking-wide">
+            Pesos ARS / USD (Blue)
+          </label>
+          <button id="btn-ars" onclick="fetchDolarBlue()"
+            class="text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-40 p-1">
+            <svg id="icon-ars" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+              <path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+              <path d="M8 16H3v5"/>
+            </svg>
+          </button>
+        </div>
+        <input id="ars-rate" type="number" inputmode="decimal" placeholder="—"
+          class="w-full bg-white border border-gray-200 rounded-lg text-gray-800 text-2xl font-light text-center h-14 outline-none focus:border-gray-400 transition-colors px-3"
+          oninput="onRateChange('ars', this.value)"
+          onkeydown="handleNumericInput(event)">
+      </div>
+
+      <!-- Divider -->
+      <div class="flex items-center gap-3 py-1">
+        <div class="flex-1 h-px bg-gray-200"></div>
+        <span class="text-xs text-gray-400">convertir</span>
+        <div class="flex-1 h-px bg-gray-200"></div>
+      </div>
+
+      <!-- PYG Amount -->
+      <div>
+        <label for="pyg-amount" class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
+          Guaraníes (PYG)
+        </label>
+        <input id="pyg-amount" type="text" inputmode="numeric" placeholder="0"
+          class="w-full bg-white border border-gray-200 rounded-lg text-gray-800 text-2xl font-light text-center h-14 outline-none focus:border-gray-400 transition-colors px-3"
+          oninput="handlePygChange(this.value)"
+          onkeydown="handleNumericInput(event)">
+      </div>
+
+      <!-- ARS Amount -->
+      <div>
+        <label for="ars-amount" class="block text-xs font-medium text-emerald-600 uppercase tracking-wide mb-1.5">
+          Pesos Argentinos (ARS)
+        </label>
+        <input id="ars-amount" type="text" inputmode="decimal" placeholder="0,00"
+          class="w-full bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-2xl font-medium text-center h-14 outline-none focus:border-emerald-400 transition-colors px-3"
+          oninput="handleArsChange(this.value)"
+          onkeydown="handleNumericInput(event)">
+      </div>
+
+      <!-- USD Amount -->
+      <div>
+        <label for="usd-amount" class="block text-xs font-medium text-blue-600 uppercase tracking-wide mb-1.5">
+          Dólares (USD)
+        </label>
+        <input id="usd-amount" type="text" inputmode="decimal" placeholder="0,00"
+          class="w-full bg-blue-50 border border-blue-200 rounded-lg text-blue-700 text-2xl font-medium text-center h-14 outline-none focus:border-blue-400 transition-colors px-3"
+          oninput="handleUsdChange(this.value)"
+          onkeydown="handleNumericInput(event)">
+      </div>
+
+      <!-- Footer -->
+      <div class="pt-2 flex justify-between items-center">
+        <p class="text-gray-300 text-xs">by: LV made with iA and Brain</p>
+        <p id="build-number" class="text-gray-300 text-xs">v1.0.32</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      pygPerUsd: '',
+      arsPerUsd: '',
+      pygAmount: '',
+      arsAmount: '',
+      usdAmount: '',
+      lastEditedField: 'pyg',
+      buildNumber: 32
+    }
+
+    // Build number counter
+    setInterval(() => {
+      state.buildNumber++
+      document.getElementById('build-number').textContent = `v1.0.${state.buildNumber}`
+    }, 30000)
+
+    // Formatters
+    function formatPYG(num) {
+      return Math.round(num).toLocaleString('de-DE')
+    }
+    function formatARS(num) {
+      return num.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    }
+    function formatUSD(num) {
+      return num.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    }
+
+    function parseFormattedNumber(str) {
+      return parseFloat(
+        str.replace(/[.,]/g, (match, offset, string) => {
+          const lastIndex = string.lastIndexOf(match)
+          if (offset === lastIndex && string.length - offset <= 3) return '.'
+          return ''
+        })
+      )
+    }
+
+    // Set a field value without disturbing the one the user is actively editing
+    function setField(id, value) {
+      const el = document.getElementById(id)
+      if (el && document.activeElement !== el) el.value = value
+    }
+
+    // Recalculate conversions
+    function recalculate() {
+      const pygRate = parseFloat(state.pygPerUsd)
+      const arsRate = parseFloat(state.arsPerUsd)
+      if (isNaN(pygRate) || isNaN(arsRate) || pygRate <= 0 || arsRate <= 0) return
+
+      if (state.lastEditedField === 'pyg' && state.pygAmount) {
+        const montoPYG = parseFormattedNumber(state.pygAmount)
+        if (!isNaN(montoPYG) && montoPYG > 0) {
+          const resARS = montoPYG * (arsRate / pygRate)
+          const resUSD = montoPYG / pygRate
+          state.arsAmount = formatARS(resARS)
+          state.usdAmount = formatUSD(resUSD)
+          setField('ars-amount', state.arsAmount)
+          setField('usd-amount', state.usdAmount)
+        }
+      } else if (state.lastEditedField === 'ars' && state.arsAmount) {
+        const montoARS = parseFormattedNumber(state.arsAmount)
+        if (!isNaN(montoARS) && montoARS > 0) {
+          const resPYG = montoARS * (pygRate / arsRate)
+          const resUSD = montoARS / arsRate
+          state.pygAmount = formatPYG(resPYG)
+          state.usdAmount = formatUSD(resUSD)
+          setField('pyg-amount', state.pygAmount)
+          setField('usd-amount', state.usdAmount)
+        }
+      } else if (state.lastEditedField === 'usd' && state.usdAmount) {
+        const montoUSD = parseFormattedNumber(state.usdAmount)
+        if (!isNaN(montoUSD) && montoUSD > 0) {
+          const resPYG = montoUSD * pygRate
+          const resARS = montoUSD * arsRate
+          state.pygAmount = formatPYG(resPYG)
+          state.arsAmount = formatARS(resARS)
+          setField('pyg-amount', state.pygAmount)
+          setField('ars-amount', state.arsAmount)
+        }
+      }
+    }
+
+    // Rate input changes
+    function onRateChange(currency, value) {
+      if (currency === 'pyg') state.pygPerUsd = value
+      else state.arsPerUsd = value
+      recalculate()
+    }
+
+    // Fetch dolar blue (ARS/USD)
+    async function fetchDolarBlue() {
+      const btn = document.getElementById('btn-ars')
+      const icon = document.getElementById('icon-ars')
+      btn.disabled = true
+      icon.classList.add('animate-spin')
+      try {
+        const res = await fetch('https://dolarapi.com/v1/dolares/blue')
+        const data = await res.json()
+        if (data && data.venta) {
+          state.arsPerUsd = data.venta.toString()
+          document.getElementById('ars-rate').value = state.arsPerUsd
+          recalculate()
+        }
+      } catch (e) {
+        console.error('Error fetching dolar blue:', e)
+      } finally {
+        btn.disabled = false
+        icon.classList.remove('animate-spin')
+      }
+    }
+
+    // Fetch USD/PYG rate
+    async function fetchUSDPYG() {
+      const btn = document.getElementById('btn-pyg')
+      const icon = document.getElementById('icon-pyg')
+      btn.disabled = true
+      icon.classList.add('animate-spin')
+      try {
+        const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD')
+        const data = await res.json()
+        if (data && data.rates && data.rates.PYG) {
+          state.pygPerUsd = Math.round(data.rates.PYG).toString()
+          document.getElementById('pyg-rate').value = state.pygPerUsd
+          recalculate()
+        }
+      } catch (e) {
+        console.error('Error fetching USD/PYG:', e)
+      } finally {
+        btn.disabled = false
+        icon.classList.remove('animate-spin')
+      }
+    }
+
+    // Keyboard validation: only allow numeric input
+    function handleNumericInput(e) {
+      if (
+        [46, 8, 9, 27, 13, 110, 190, 188].indexOf(e.keyCode) !== -1 ||
+        (e.keyCode === 65 && e.ctrlKey) ||
+        (e.keyCode === 67 && e.ctrlKey) ||
+        (e.keyCode === 86 && e.ctrlKey) ||
+        (e.keyCode === 88 && e.ctrlKey) ||
+        (e.keyCode >= 35 && e.keyCode <= 39)
+      ) return
+      if ((e.shiftKey || e.keyCode < 48 || e.keyCode > 57) && (e.keyCode < 96 || e.keyCode > 105)) {
+        e.preventDefault()
+      }
+    }
+
+    // Amount input handlers
+    function handlePygChange(value) {
+      const clean = value.replace(/[^\d.,]/g, '')
+      state.pygAmount = clean
+      state.lastEditedField = 'pyg'
+      if (!clean) {
+        state.arsAmount = ''
+        state.usdAmount = ''
+        setField('ars-amount', '')
+        setField('usd-amount', '')
+      } else {
+        recalculate()
+      }
+    }
+
+    function handleArsChange(value) {
+      const clean = value.replace(/[^\d.,]/g, '')
+      state.arsAmount = clean
+      state.lastEditedField = 'ars'
+      if (!clean) {
+        state.pygAmount = ''
+        state.usdAmount = ''
+        setField('pyg-amount', '')
+        setField('usd-amount', '')
+      } else {
+        recalculate()
+      }
+    }
+
+    function handleUsdChange(value) {
+      const clean = value.replace(/[^\d.,]/g, '')
+      state.usdAmount = clean
+      state.lastEditedField = 'usd'
+      if (!clean) {
+        state.pygAmount = ''
+        state.arsAmount = ''
+        setField('pyg-amount', '')
+        setField('ars-amount', '')
+      } else {
+        recalculate()
+      }
+    }
+
+    // Init: fetch rates on load
+    fetchDolarBlue()
+    fetchUSDPYG()
+  </script>
+
+</body>
+</html>
