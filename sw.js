@@ -1,5 +1,5 @@
 const CACHE = 'guaraca-v1'
-const ASSETS = ['/', '/index.html', '/icon.svg', '/manifest.json']
+const ASSETS = ['./index.html', './icon.svg', './manifest.json', './sw.js']
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)))
