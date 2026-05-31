@@ -3,352 +3,588 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Convertidor de monedas en tiempo real entre Guaraníes Paraguayos (PYG), Pesos Argentinos (ARS) y Dólares Estadounidenses (USD). Tasas actualizadas automáticamente.">
-  <title>Guaraca Pesificator - Convertidor de Monedas PYG/ARS/USD</title>
+  <meta name="description" content="Convertidor de monedas PYG · ARS · USD">
+  <title>Guaraca Pesificator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config = { darkMode: 'class' }</script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .animate-spin { animation: spin 1s linear infinite; }
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-    input[type=number] { -moz-appearance: textfield; }
-  </style>
-  <script>
-    // Apply dark mode before render to avoid flash
-    if (localStorage.getItem('theme') === 'dark') {
-      document.documentElement.classList.add('dark')
-    }
-  </script>
-</head>
-<body class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4 transition-colors">
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <div class="w-full max-w-sm">
+    :root {
+      --cyan:    #00d4ff;
+      --green:   #00ff9d;
+      --blue:    #4d9fff;
+      --purple:  #a855f7;
+      --bg:      #04040f;
+      --surface: rgba(8, 12, 35, 0.9);
+      --border:  rgba(0, 212, 255, 0.18);
+      --text:    rgba(255,255,255,0.85);
+      --muted:   rgba(0,212,255,0.45);
+    }
+
+    .light {
+      --cyan:    #0077cc;
+      --green:   #00915a;
+      --blue:    #1d65c8;
+      --purple:  #7c3aed;
+      --bg:      #f0f4ff;
+      --surface: rgba(255,255,255,0.85);
+      --border:  rgba(0,119,204,0.2);
+      --text:    #0f172a;
+      --muted:   rgba(0,119,204,0.55);
+    }
+
+    html { transition: background 0.3s; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* Animated background grid */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      animation: gridScroll 25s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .light .bg-grid {
+      background-image:
+        linear-gradient(rgba(0,119,204,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,119,204,0.06) 1px, transparent 1px);
+    }
+    @keyframes gridScroll {
+      from { background-position: 0 0; }
+      to   { background-position: 48px 48px; }
+    }
+
+    /* Central radial glow */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(0,212,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .light .bg-glow {
+      background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(0,119,204,0.06) 0%, transparent 70%);
+    }
+
+    /* Main container */
+    .container {
+      width: 100%;
+      max-width: 390px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .header h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: var(--cyan);
+      text-shadow: 0 0 18px color-mix(in srgb, var(--cyan) 80%, transparent);
+      animation: titlePulse 4s ease-in-out infinite;
+    }
+    .light .header h1 { text-shadow: none; }
+
+    @keyframes titlePulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.82; }
+    }
+
+    .header p {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.4em;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      text-transform: uppercase;
+    }
+
+    .theme-btn {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.4rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+    }
+    .theme-btn:hover {
+      color: var(--cyan);
+      border-color: var(--cyan);
+      box-shadow: 0 0 12px color-mix(in srgb, var(--cyan) 30%, transparent);
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem 1.5rem;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow:
+        0 0 60px rgba(0,212,255,0.04),
+        0 24px 48px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(0,212,255,0.12);
+      position: relative;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .light .card {
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    /* Corner brackets */
+    .card::before, .card::after,
+    .card .corner-br, .card .corner-tl-inner { display: none; }
+
+    .bracket {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-color: var(--cyan);
+      border-style: solid;
+    }
+    .bracket-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-radius: 20px 0 0 0; }
+    .bracket-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; border-radius: 0 20px 0 0; }
+    .bracket-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; border-radius: 0 0 0 20px; }
+    .bracket-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 20px 0; }
+
+    /* ── Field ── */
+    .field { margin-bottom: 1.1rem; }
+
+    .field-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .field-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .refresh-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .refresh-btn:hover { color: var(--cyan); filter: drop-shadow(0 0 4px var(--cyan)); }
+    .refresh-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+    /* ── Inputs ── */
+    input {
+      width: 100%;
+      background: rgba(0,212,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 1.8rem;
+      font-weight: 300;
+      font-family: 'Orbitron', monospace;
+      letter-spacing: 0.05em;
+      text-align: center;
+      height: 3.6rem;
+      outline: none;
+      padding: 0 0.75rem;
+      transition: all 0.25s;
+    }
+    .light input { background: rgba(0,0,0,0.03); }
+    input::placeholder { color: rgba(255,255,255,0.1); font-family: 'Inter', sans-serif; font-size: 1rem; }
+    .light input::placeholder { color: rgba(0,0,0,0.15); }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    input:focus {
+      border-color: var(--cyan);
+      background: rgba(0,212,255,0.05);
+      box-shadow: 0 0 0 1px rgba(0,212,255,0.25), 0 0 24px rgba(0,212,255,0.08);
+    }
+    .light input:focus { box-shadow: 0 0 0 2px rgba(0,119,204,0.25); }
+
+    /* ARS */
+    .field-ars .field-label { color: color-mix(in srgb, var(--green) 70%, transparent); }
+    .field-ars input {
+      border-color: color-mix(in srgb, var(--green) 25%, transparent);
+      color: var(--green);
+    }
+    .field-ars input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 25%, transparent), 0 0 24px color-mix(in srgb, var(--green) 8%, transparent);
+    }
+
+    /* USD */
+    .field-usd .field-label { color: color-mix(in srgb, var(--blue) 70%, transparent); }
+    .field-usd input {
+      border-color: color-mix(in srgb, var(--blue) 25%, transparent);
+      color: var(--blue);
+    }
+    .field-usd input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--blue) 25%, transparent), 0 0 24px color-mix(in srgb, var(--blue) 8%, transparent);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1.35rem 0;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .divider-text {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.35em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.35rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .footer span {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      color: color-mix(in srgb, var(--muted) 50%, transparent);
+    }
+
+    /* Spin animation */
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .spinning { animation: spin 1s linear infinite; }
+
+    /* Scanline overlay (subtle, dark mode only) */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0,0,0,0.06) 3px,
+        rgba(0,0,0,0.06) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+    .light .scanlines { display: none; }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="scanlines"></div>
+
+  <div class="container">
 
     <!-- Header -->
-    <div class="text-center mb-8 relative">
-      <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100 tracking-tight">Guaraca Pesificator</h1>
-      <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Convertidor PYG · ARS · USD</p>
-      <button onclick="toggleDark()" id="theme-btn"
-        class="absolute right-0 top-0 p-1.5 rounded-full text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-        <!-- Sun icon (visible in dark mode) -->
-        <svg id="icon-sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+    <div class="header">
+      <h1>GUARACA PESIFICATOR</h1>
+      <p>currency converter · pyg · ars · usd</p>
+      <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" title="Cambiar tema">
+        <svg id="icon-sun" style="display:none" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
         </svg>
-        <!-- Moon icon (visible in light mode) -->
-        <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
         </svg>
       </button>
     </div>
 
-    <!-- Content -->
-    <div class="space-y-5">
+    <!-- Card -->
+    <div class="card">
+      <span class="bracket bracket-tl"></span>
+      <span class="bracket bracket-tr"></span>
+      <span class="bracket bracket-bl"></span>
+      <span class="bracket bracket-br"></span>
 
       <!-- PYG Rate -->
-      <div>
-        <div class="flex items-center justify-between mb-1.5">
-          <label for="pyg-rate" class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-            Guaraníes / USD
-          </label>
-          <button id="btn-pyg" onclick="fetchUSDPYG()"
-            class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors disabled:opacity-40 p-1">
-            <svg id="icon-pyg" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-              <path d="M21 3v5h-5"/>
-              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-              <path d="M8 16H3v5"/>
+      <div class="field">
+        <div class="field-header">
+          <span class="field-label">Guaraníes / USD</span>
+          <button class="refresh-btn" id="btn-pyg" onclick="fetchUSDPYG()">
+            <svg id="icon-pyg" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>
             </svg>
           </button>
         </div>
         <input id="pyg-rate" type="number" inputmode="decimal" placeholder="—"
-          class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-100 text-2xl font-light text-center h-14 outline-none focus:border-gray-400 dark:focus:border-gray-500 transition-colors px-3"
-          oninput="onRateChange('pyg', this.value)"
-          onkeydown="handleNumericInput(event)">
+          oninput="onRateChange('pyg', this.value)" onkeydown="handleNumericInput(event)">
       </div>
 
       <!-- ARS Rate -->
-      <div>
-        <div class="flex items-center justify-between mb-1.5">
-          <label for="ars-rate" class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-            Pesos ARS / USD (Blue)
-          </label>
-          <button id="btn-ars" onclick="fetchDolarBlue()"
-            class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors disabled:opacity-40 p-1">
-            <svg id="icon-ars" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-              <path d="M21 3v5h-5"/>
-              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-              <path d="M8 16H3v5"/>
+      <div class="field">
+        <div class="field-header">
+          <span class="field-label">Pesos ARS / USD · Blue</span>
+          <button class="refresh-btn" id="btn-ars" onclick="fetchDolarBlue()">
+            <svg id="icon-ars" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>
             </svg>
           </button>
         </div>
         <input id="ars-rate" type="number" inputmode="decimal" placeholder="—"
-          class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-100 text-2xl font-light text-center h-14 outline-none focus:border-gray-400 dark:focus:border-gray-500 transition-colors px-3"
-          oninput="onRateChange('ars', this.value)"
-          onkeydown="handleNumericInput(event)">
+          oninput="onRateChange('ars', this.value)" onkeydown="handleNumericInput(event)">
       </div>
 
       <!-- Divider -->
-      <div class="flex items-center gap-3 py-1">
-        <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
-        <span class="text-xs text-gray-400 dark:text-gray-500">convertir</span>
-        <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">convert</span>
+        <div class="divider-line"></div>
       </div>
 
       <!-- PYG Amount -->
-      <div>
-        <label for="pyg-amount" class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">
-          Guaraníes (PYG)
-        </label>
+      <div class="field">
+        <div class="field-header">
+          <span class="field-label">Guaraníes · PYG</span>
+        </div>
         <input id="pyg-amount" type="text" inputmode="numeric" placeholder="0"
-          class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-100 text-2xl font-light text-center h-14 outline-none focus:border-gray-400 dark:focus:border-gray-500 transition-colors px-3"
-          oninput="handlePygChange(this.value)"
-          onkeydown="handleNumericInput(event)">
+          oninput="handlePygChange(this.value)" onkeydown="handleNumericInput(event)">
       </div>
 
       <!-- ARS Amount -->
-      <div>
-        <label for="ars-amount" class="block text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wide mb-1.5">
-          Pesos Argentinos (ARS)
-        </label>
+      <div class="field field-ars">
+        <div class="field-header">
+          <span class="field-label">Pesos Argentinos · ARS</span>
+        </div>
         <input id="ars-amount" type="text" inputmode="decimal" placeholder="0,00"
-          class="w-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 rounded-lg text-emerald-700 dark:text-emerald-300 text-2xl font-medium text-center h-14 outline-none focus:border-emerald-400 dark:focus:border-emerald-500 transition-colors px-3"
-          oninput="handleArsChange(this.value)"
-          onkeydown="handleNumericInput(event)">
+          oninput="handleArsChange(this.value)" onkeydown="handleNumericInput(event)">
       </div>
 
       <!-- USD Amount -->
-      <div>
-        <label for="usd-amount" class="block text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1.5">
-          Dólares (USD)
-        </label>
+      <div class="field field-usd">
+        <div class="field-header">
+          <span class="field-label">Dólares · USD</span>
+        </div>
         <input id="usd-amount" type="text" inputmode="decimal" placeholder="0,00"
-          class="w-full bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg text-blue-700 dark:text-blue-300 text-2xl font-medium text-center h-14 outline-none focus:border-blue-400 dark:focus:border-blue-500 transition-colors px-3"
-          oninput="handleUsdChange(this.value)"
-          onkeydown="handleNumericInput(event)">
+          oninput="handleUsdChange(this.value)" onkeydown="handleNumericInput(event)">
       </div>
 
       <!-- Footer -->
-      <div class="pt-2 flex justify-between items-center">
-        <p class="text-gray-300 dark:text-gray-600 text-xs">by: LV made with iA and Brain</p>
-        <p id="build-number" class="text-gray-300 dark:text-gray-600 text-xs">v1.0.32</p>
+      <div class="footer">
+        <span>LV · made with iA and Brain</span>
+        <span id="build-number">v1.0.32</span>
       </div>
-
     </div>
+
   </div>
 
   <script>
+    // Theme
+    const html = document.documentElement
+    const saved = localStorage.getItem('theme')
+    if (saved === 'light') applyLight()
+
+    function applyLight() {
+      html.classList.add('light')
+      document.getElementById('icon-sun').style.display = 'block'
+      document.getElementById('icon-moon').style.display = 'none'
+    }
+    function applyDark() {
+      html.classList.remove('light')
+      document.getElementById('icon-sun').style.display = 'none'
+      document.getElementById('icon-moon').style.display = 'block'
+    }
+    function toggleTheme() {
+      if (html.classList.contains('light')) {
+        applyDark()
+        localStorage.setItem('theme', 'dark')
+      } else {
+        applyLight()
+        localStorage.setItem('theme', 'light')
+      }
+    }
+
+    // State
     const state = {
-      pygPerUsd: '',
-      arsPerUsd: '',
-      pygAmount: '',
-      arsAmount: '',
-      usdAmount: '',
-      lastEditedField: 'pyg',
-      buildNumber: 32
+      pygPerUsd: '', arsPerUsd: '',
+      pygAmount: '', arsAmount: '', usdAmount: '',
+      lastEditedField: 'pyg', buildNumber: 32
     }
 
-    // Dark mode toggle
-    function toggleDark() {
-      const html = document.documentElement
-      const isDark = html.classList.toggle('dark')
-      localStorage.setItem('theme', isDark ? 'dark' : 'light')
-      document.getElementById('icon-sun').classList.toggle('hidden', !isDark)
-      document.getElementById('icon-moon').classList.toggle('hidden', isDark)
-    }
-
-    // Set correct icon on load
-    if (localStorage.getItem('theme') === 'dark') {
-      document.getElementById('icon-sun').classList.remove('hidden')
-      document.getElementById('icon-moon').classList.add('hidden')
-    }
-
-    // Build number counter
     setInterval(() => {
-      state.buildNumber++
-      document.getElementById('build-number').textContent = `v1.0.${state.buildNumber}`
+      document.getElementById('build-number').textContent = `v1.0.${++state.buildNumber}`
     }, 30000)
 
     // Formatters
-    function formatPYG(num) {
-      return Math.round(num).toLocaleString('de-DE')
-    }
-    function formatARS(num) {
-      return num.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-    }
-    function formatUSD(num) {
-      return num.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    const fmt = (n, dec=0) => n.toLocaleString('de-DE', { minimumFractionDigits: dec, maximumFractionDigits: dec })
+    const formatPYG = n => fmt(Math.round(n))
+    const formatARS = n => fmt(n, 2)
+    const formatUSD = n => fmt(n, 2)
+
+    function parseNum(str) {
+      return parseFloat(str.replace(/[.,]/g, (m, i, s) => {
+        const last = s.lastIndexOf(m)
+        return i === last && s.length - i <= 3 ? '.' : ''
+      }))
     }
 
-    function parseFormattedNumber(str) {
-      return parseFloat(
-        str.replace(/[.,]/g, (match, offset, string) => {
-          const lastIndex = string.lastIndexOf(match)
-          if (offset === lastIndex && string.length - offset <= 3) return '.'
-          return ''
-        })
-      )
-    }
-
-    // Set a field value without disturbing the one the user is actively editing
-    function setField(id, value) {
+    function setField(id, val) {
       const el = document.getElementById(id)
-      if (el && document.activeElement !== el) el.value = value
+      if (el && document.activeElement !== el) el.value = val
     }
 
-    // Recalculate conversions
     function recalculate() {
       const pygRate = parseFloat(state.pygPerUsd)
       const arsRate = parseFloat(state.arsPerUsd)
       if (isNaN(pygRate) || isNaN(arsRate) || pygRate <= 0 || arsRate <= 0) return
 
       if (state.lastEditedField === 'pyg' && state.pygAmount) {
-        const montoPYG = parseFormattedNumber(state.pygAmount)
-        if (!isNaN(montoPYG) && montoPYG > 0) {
-          state.arsAmount = formatARS(montoPYG * (arsRate / pygRate))
-          state.usdAmount = formatUSD(montoPYG / pygRate)
+        const v = parseNum(state.pygAmount)
+        if (!isNaN(v) && v > 0) {
+          state.arsAmount = formatARS(v * arsRate / pygRate)
+          state.usdAmount = formatUSD(v / pygRate)
           setField('ars-amount', state.arsAmount)
           setField('usd-amount', state.usdAmount)
         }
       } else if (state.lastEditedField === 'ars' && state.arsAmount) {
-        const montoARS = parseFormattedNumber(state.arsAmount)
-        if (!isNaN(montoARS) && montoARS > 0) {
-          state.pygAmount = formatPYG(montoARS * (pygRate / arsRate))
-          state.usdAmount = formatUSD(montoARS / arsRate)
+        const v = parseNum(state.arsAmount)
+        if (!isNaN(v) && v > 0) {
+          state.pygAmount = formatPYG(v * pygRate / arsRate)
+          state.usdAmount = formatUSD(v / arsRate)
           setField('pyg-amount', state.pygAmount)
           setField('usd-amount', state.usdAmount)
         }
       } else if (state.lastEditedField === 'usd' && state.usdAmount) {
-        const montoUSD = parseFormattedNumber(state.usdAmount)
-        if (!isNaN(montoUSD) && montoUSD > 0) {
-          state.pygAmount = formatPYG(montoUSD * pygRate)
-          state.arsAmount = formatARS(montoUSD * arsRate)
+        const v = parseNum(state.usdAmount)
+        if (!isNaN(v) && v > 0) {
+          state.pygAmount = formatPYG(v * pygRate)
+          state.arsAmount = formatARS(v * arsRate)
           setField('pyg-amount', state.pygAmount)
           setField('ars-amount', state.arsAmount)
         }
       }
     }
 
-    // Rate input changes
-    function onRateChange(currency, value) {
-      if (currency === 'pyg') state.pygPerUsd = value
-      else state.arsPerUsd = value
+    function onRateChange(cur, val) {
+      if (cur === 'pyg') state.pygPerUsd = val
+      else state.arsPerUsd = val
       recalculate()
     }
 
-    // Fetch dolar blue (ARS/USD)
+    function setLoading(id, on) {
+      const btn = document.getElementById('btn-' + id)
+      const icon = document.getElementById('icon-' + id)
+      btn.disabled = on
+      icon.classList.toggle('spinning', on)
+    }
+
     async function fetchDolarBlue() {
-      const btn = document.getElementById('btn-ars')
-      const icon = document.getElementById('icon-ars')
-      btn.disabled = true
-      icon.classList.add('animate-spin')
+      setLoading('ars', true)
       try {
-        const res = await fetch('https://dolarapi.com/v1/dolares/blue')
-        const data = await res.json()
-        if (data && data.venta) {
-          state.arsPerUsd = data.venta.toString()
+        const r = await fetch('https://dolarapi.com/v1/dolares/blue')
+        const d = await r.json()
+        if (d?.venta) {
+          state.arsPerUsd = d.venta.toString()
           document.getElementById('ars-rate').value = state.arsPerUsd
           recalculate()
         }
-      } catch (e) {
-        console.error('Error fetching dolar blue:', e)
-      } finally {
-        btn.disabled = false
-        icon.classList.remove('animate-spin')
-      }
+      } catch(e) { console.error(e) }
+      finally { setLoading('ars', false) }
     }
 
-    // Fetch USD/PYG rate
     async function fetchUSDPYG() {
-      const btn = document.getElementById('btn-pyg')
-      const icon = document.getElementById('icon-pyg')
-      btn.disabled = true
-      icon.classList.add('animate-spin')
+      setLoading('pyg', true)
       try {
-        const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD')
-        const data = await res.json()
-        if (data && data.rates && data.rates.PYG) {
-          state.pygPerUsd = Math.round(data.rates.PYG).toString()
+        const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD')
+        const d = await r.json()
+        if (d?.rates?.PYG) {
+          state.pygPerUsd = Math.round(d.rates.PYG).toString()
           document.getElementById('pyg-rate').value = state.pygPerUsd
           recalculate()
         }
-      } catch (e) {
-        console.error('Error fetching USD/PYG:', e)
-      } finally {
-        btn.disabled = false
-        icon.classList.remove('animate-spin')
-      }
+      } catch(e) { console.error(e) }
+      finally { setLoading('pyg', false) }
     }
 
-    // Keyboard validation: only allow numeric input
     function handleNumericInput(e) {
-      if (
-        [46, 8, 9, 27, 13, 110, 190, 188].indexOf(e.keyCode) !== -1 ||
-        (e.keyCode === 65 && e.ctrlKey) ||
-        (e.keyCode === 67 && e.ctrlKey) ||
-        (e.keyCode === 86 && e.ctrlKey) ||
-        (e.keyCode === 88 && e.ctrlKey) ||
-        (e.keyCode >= 35 && e.keyCode <= 39)
-      ) return
-      if ((e.shiftKey || e.keyCode < 48 || e.keyCode > 57) && (e.keyCode < 96 || e.keyCode > 105)) {
+      if ([46,8,9,27,13,110,190,188].includes(e.keyCode) ||
+          ((e.keyCode===65||e.keyCode===67||e.keyCode===86||e.keyCode===88) && e.ctrlKey) ||
+          (e.keyCode>=35 && e.keyCode<=39)) return
+      if ((e.shiftKey || e.keyCode<48 || e.keyCode>57) && (e.keyCode<96 || e.keyCode>105))
         e.preventDefault()
-      }
     }
 
-    // Amount input handlers
-    function handlePygChange(value) {
-      const digits = value.replace(/\D/g, '')
+    function handlePygChange(val) {
+      const digits = val.replace(/\D/g, '')
       const formatted = digits ? parseInt(digits, 10).toLocaleString('de-DE') : ''
       state.pygAmount = formatted
       document.getElementById('pyg-amount').value = formatted
       state.lastEditedField = 'pyg'
-      if (!digits) {
-        state.arsAmount = ''
-        state.usdAmount = ''
-        setField('ars-amount', '')
-        setField('usd-amount', '')
-      } else {
-        recalculate()
-      }
+      if (!digits) { state.arsAmount=''; state.usdAmount=''; setField('ars-amount',''); setField('usd-amount','') }
+      else recalculate()
     }
 
-    function handleArsChange(value) {
-      const clean = value.replace(/[^\d.,]/g, '')
-      state.arsAmount = clean
-      state.lastEditedField = 'ars'
-      if (!clean) {
-        state.pygAmount = ''
-        state.usdAmount = ''
-        setField('pyg-amount', '')
-        setField('usd-amount', '')
-      } else {
-        recalculate()
-      }
+    function handleArsChange(val) {
+      const clean = val.replace(/[^\d.,]/g,'')
+      state.arsAmount = clean; state.lastEditedField = 'ars'
+      if (!clean) { state.pygAmount=''; state.usdAmount=''; setField('pyg-amount',''); setField('usd-amount','') }
+      else recalculate()
     }
 
-    function handleUsdChange(value) {
-      const clean = value.replace(/[^\d.,]/g, '')
-      state.usdAmount = clean
-      state.lastEditedField = 'usd'
-      if (!clean) {
-        state.pygAmount = ''
-        state.arsAmount = ''
-        setField('pyg-amount', '')
-        setField('ars-amount', '')
-      } else {
-        recalculate()
-      }
+    function handleUsdChange(val) {
+      const clean = val.replace(/[^\d.,]/g,'')
+      state.usdAmount = clean; state.lastEditedField = 'usd'
+      if (!clean) { state.pygAmount=''; state.arsAmount=''; setField('pyg-amount',''); setField('ars-amount','') }
+      else recalculate()
     }
 
-    // Init: fetch rates on load
     fetchDolarBlue()
     fetchUSDPYG()
   </script>
-
 </body>
 </html>
