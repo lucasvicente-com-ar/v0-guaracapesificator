@@ -6,7 +6,7 @@
   <meta name="description" content="Convertidor de monedas PYG · ARS · USD">
   <title>Guaraca Pesificator</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#00d4ff">
+  <meta name="theme-color" content="#0d1117">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Guaraca">
@@ -18,117 +18,67 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --cyan:    #00d4ff;
-      --green:   #00ff9d;
-      --blue:    #4d9fff;
-      --purple:  #a855f7;
-      --bg:      #04040f;
-      --surface: rgba(8, 12, 35, 0.9);
-      --border:  rgba(0, 212, 255, 0.18);
-      --text:    rgba(255,255,255,0.85);
-      --muted:   rgba(0,212,255,0.45);
+      --cyan:    #22d3ee;
+      --green:   #34d399;
+      --blue:    #60a5fa;
+      --bg:      #0d1117;
+      --surface: #161b22;
+      --border:  rgba(34, 211, 238, 0.15);
+      --text:    #e6edf3;
+      --muted:   rgba(34, 211, 238, 0.5);
+      --subtle:  rgba(230, 237, 243, 0.4);
     }
 
     .light {
-      --cyan:    #0077cc;
-      --green:   #00915a;
-      --blue:    #1d65c8;
-      --purple:  #7c3aed;
-      --bg:      #f0f4ff;
-      --surface: rgba(255,255,255,0.85);
-      --border:  rgba(0,119,204,0.2);
+      --cyan:    #0e7490;
+      --green:   #059669;
+      --blue:    #2563eb;
+      --bg:      #f8fafc;
+      --surface: #ffffff;
+      --border:  rgba(14, 116, 144, 0.2);
       --text:    #0f172a;
-      --muted:   rgba(0,119,204,0.55);
+      --muted:   rgba(14, 116, 144, 0.6);
+      --subtle:  rgba(15, 23, 42, 0.35);
     }
-
-    html { transition: background 0.3s; }
 
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
       min-height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 1rem 1.5rem;
-      color: var(--text);
-      overflow-x: hidden;
-      position: relative;
       align-items: flex-start;
+      justify-content: center;
+      padding: 0 1rem 2rem;
+      color: var(--text);
       transition: background 0.3s, color 0.3s;
     }
 
-    /* Animated background grid */
-    .bg-grid {
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(0,212,255,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,212,255,0.05) 1px, transparent 1px);
-      background-size: 48px 48px;
-      animation: gridScroll 25s linear infinite;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .light .bg-grid {
-      background-image:
-        linear-gradient(rgba(0,119,204,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,119,204,0.06) 1px, transparent 1px);
-    }
-    @keyframes gridScroll {
-      from { background-position: 0 0; }
-      to   { background-position: 48px 48px; }
-    }
-
-    /* Central radial glow */
-    .bg-glow {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(0,212,255,0.06) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .light .bg-glow {
-      background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(0,119,204,0.06) 0%, transparent 70%);
-    }
-
-    /* Main container */
     .container {
       width: 100%;
-      max-width: 390px;
-      position: relative;
-      z-index: 1;
+      max-width: 380px;
     }
 
     /* ── Header ── */
     .header {
       text-align: center;
-      margin-bottom: 2rem;
+      padding: 1.5rem 0 1.25rem;
       position: relative;
     }
 
     .header h1 {
       font-family: 'Orbitron', monospace;
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       font-weight: 900;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.1em;
       color: var(--cyan);
-      text-shadow: 0 0 18px color-mix(in srgb, var(--cyan) 80%, transparent);
-      animation: titlePulse 4s ease-in-out infinite;
-    }
-    .light .header h1 { text-shadow: none; }
-
-    @keyframes titlePulse {
-      0%,100% { opacity: 1; }
-      50%      { opacity: 0.82; }
     }
 
     .header p {
       font-family: 'Orbitron', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.4em;
+      font-size: 0.52rem;
+      letter-spacing: 0.35em;
       color: var(--muted);
-      margin-top: 0.35rem;
+      margin-top: 0.3rem;
       text-transform: uppercase;
     }
 
@@ -143,64 +93,51 @@
       padding: 0.4rem;
       border-radius: 8px;
       cursor: pointer;
-      transition: all 0.2s;
       display: flex;
+      transition: border-color 0.2s, color 0.2s;
     }
-    .theme-btn:hover {
-      color: var(--cyan);
-      border-color: var(--cyan);
-      box-shadow: 0 0 12px color-mix(in srgb, var(--cyan) 30%, transparent);
-    }
+    .theme-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
     /* ── Card ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 1.75rem 1.5rem;
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      box-shadow:
-        0 0 60px rgba(0,212,255,0.04),
-        0 24px 48px rgba(0,0,0,0.4),
-        inset 0 1px 0 rgba(0,212,255,0.12);
+      border-radius: 16px;
+      padding: 1.5rem;
       position: relative;
-      transition: background 0.3s, border-color 0.3s;
     }
     .light .card {
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
     }
 
     /* Corner brackets */
-    .card::before, .card::after,
-    .card .corner-br, .card .corner-tl-inner { display: none; }
-
     .bracket {
       position: absolute;
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       border-color: var(--cyan);
       border-style: solid;
+      opacity: 0.6;
     }
-    .bracket-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-radius: 20px 0 0 0; }
-    .bracket-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; border-radius: 0 20px 0 0; }
-    .bracket-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; border-radius: 0 0 0 20px; }
-    .bracket-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 20px 0; }
+    .bracket-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-radius: 16px 0 0 0; }
+    .bracket-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; border-radius: 0 16px 0 0; }
+    .bracket-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; border-radius: 0 0 0 16px; }
+    .bracket-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 16px 0; }
 
-    /* ── Field ── */
-    .field { margin-bottom: 1.1rem; }
+    /* ── Fields ── */
+    .field { margin-bottom: 1rem; }
 
     .field-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.45rem;
     }
 
     .field-label {
       font-family: 'Orbitron', monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.18em;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
       color: var(--muted);
       text-transform: uppercase;
     }
@@ -208,86 +145,63 @@
     .refresh-btn {
       background: none;
       border: none;
-      color: var(--muted);
+      color: var(--subtle);
       cursor: pointer;
-      padding: 0.25rem;
-      border-radius: 4px;
+      padding: 0.2rem;
       display: flex;
-      align-items: center;
-      transition: all 0.2s;
+      transition: color 0.2s;
     }
-    .refresh-btn:hover { color: var(--cyan); filter: drop-shadow(0 0 4px var(--cyan)); }
-    .refresh-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+    .refresh-btn:hover { color: var(--cyan); }
+    .refresh-btn:disabled { opacity: 0.2; cursor: not-allowed; }
 
     /* ── Inputs ── */
     input {
       width: 100%;
-      background: rgba(0,212,255,0.03);
+      background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 8px;
       color: var(--text);
-      font-size: 1.8rem;
+      font-size: 1.75rem;
       font-weight: 300;
       font-family: 'Orbitron', monospace;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
       text-align: center;
-      height: 3.6rem;
+      height: 3.4rem;
       outline: none;
       padding: 0 0.75rem;
-      transition: all 0.25s;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .light input { background: rgba(0,0,0,0.03); }
-    input::placeholder { color: rgba(255,255,255,0.1); font-family: 'Inter', sans-serif; font-size: 1rem; }
-    .light input::placeholder { color: rgba(0,0,0,0.15); }
+    .light input { background: #f1f5f9; }
+    input::placeholder { color: var(--subtle); font-family: 'Inter', sans-serif; font-size: 0.85rem; letter-spacing: 0; }
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     input[type=number] { -moz-appearance: textfield; }
+    input:focus { border-color: var(--cyan); }
 
-    input:focus {
-      border-color: var(--cyan);
-      background: rgba(0,212,255,0.05);
-      box-shadow: 0 0 0 1px rgba(0,212,255,0.25), 0 0 24px rgba(0,212,255,0.08);
-    }
-    .light input:focus { box-shadow: 0 0 0 2px rgba(0,119,204,0.25); }
-
-    /* ARS */
     .field-ars .field-label { color: color-mix(in srgb, var(--green) 70%, transparent); }
-    .field-ars input {
-      border-color: color-mix(in srgb, var(--green) 25%, transparent);
-      color: var(--green);
-    }
-    .field-ars input:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 25%, transparent), 0 0 24px color-mix(in srgb, var(--green) 8%, transparent);
-    }
+    .field-ars input { border-color: color-mix(in srgb, var(--green) 20%, transparent); color: var(--green); }
+    .field-ars input:focus { border-color: var(--green); }
 
-    /* USD */
     .field-usd .field-label { color: color-mix(in srgb, var(--blue) 70%, transparent); }
-    .field-usd input {
-      border-color: color-mix(in srgb, var(--blue) 25%, transparent);
-      color: var(--blue);
-    }
-    .field-usd input:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 1px color-mix(in srgb, var(--blue) 25%, transparent), 0 0 24px color-mix(in srgb, var(--blue) 8%, transparent);
-    }
+    .field-usd input { border-color: color-mix(in srgb, var(--blue) 20%, transparent); color: var(--blue); }
+    .field-usd input:focus { border-color: var(--blue); }
 
-    /* ── Divider ── */
+    /* ── Dividers ── */
     .divider {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      margin: 1.35rem 0;
+      margin: 1.1rem 0;
     }
     .divider-line {
       flex: 1;
       height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      background: var(--border);
     }
     .divider-text {
       font-family: 'Orbitron', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.35em;
+      font-size: 0.52rem;
+      letter-spacing: 0.3em;
       color: var(--muted);
       text-transform: uppercase;
     }
@@ -297,95 +211,28 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 1.35rem;
-      padding-top: 1rem;
+      margin-top: 1.1rem;
+      padding-top: 0.9rem;
       border-top: 1px solid var(--border);
     }
     .footer span {
       font-family: 'Orbitron', monospace;
-      font-size: 0.55rem;
+      font-size: 0.5rem;
       letter-spacing: 0.12em;
-      color: color-mix(in srgb, var(--muted) 50%, transparent);
+      color: color-mix(in srgb, var(--muted) 45%, transparent);
     }
 
-    /* Spin animation */
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .spinning { animation: spin 1s linear infinite; }
-
-    /* Glitch effect for divider texts */
-    @keyframes glitch {
-      0%, 78%, 100% { text-shadow: none; transform: none; opacity: 1; }
-      79% { text-shadow: -2px 0 #ff0040, 2px 0 var(--cyan); transform: translateX(2px); }
-      80% { text-shadow: 2px 0 #ff0040, -2px 0 var(--cyan); transform: translateX(-2px); opacity: 0.85; }
-      81% { text-shadow: none; transform: skewX(10deg); }
-      82% { text-shadow: -1px 0 var(--cyan); transform: translateX(1px); }
-      83% { text-shadow: none; transform: none; opacity: 1; }
-      84% { text-shadow: 2px 0 #ff0040; transform: translateX(-1px); opacity: 0.9; }
-      85% { text-shadow: none; transform: none; opacity: 1; }
-    }
-
-    /* Pulsing glow for divider texts */
-    @keyframes glowPulse {
-      0%, 100% { opacity: 0.45; letter-spacing: 0.35em; }
-      50%       { opacity: 0.85; letter-spacing: 0.42em; text-shadow: 0 0 10px var(--cyan); }
-    }
-
-    /* Scanning light along divider lines */
-    @keyframes scanBeam {
-      0%   { left: -30%; opacity: 0; }
-      5%   { opacity: 1; }
-      95%  { opacity: 1; }
-      100% { left: 130%; opacity: 0; }
-    }
-
-    .divider-line { position: relative; overflow: hidden; }
-    .divider-line::after {
-      content: '';
-      position: absolute;
-      top: -1px;
-      left: -30%;
-      width: 25%;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-      animation: scanBeam 3s ease-in-out infinite;
-    }
-
-    #div-cotiz {
-      animation: glitch 6s infinite, glowPulse 3s ease-in-out infinite;
-    }
-    #div-conv {
-      animation: glitch 6s 2.5s infinite, glowPulse 3s 1.5s ease-in-out infinite;
-    }
-
-    /* Scanline overlay (subtle, dark mode only) */
-    .scanlines {
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 3px,
-        rgba(0,0,0,0.06) 3px,
-        rgba(0,0,0,0.06) 4px
-      );
-      pointer-events: none;
-      z-index: 0;
-    }
-    .light .scanlines { display: none; }
   </style>
 </head>
 <body>
-  <div class="bg-grid"></div>
-  <div class="bg-glow"></div>
-  <div class="scanlines"></div>
-
   <div class="container">
 
-    <!-- Header -->
     <div class="header">
       <h1>GUARACA PESIFICATOR</h1>
       <p>intercambiador galáctico de divisas</p>
-      <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" title="Cambiar tema">
+      <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">
         <svg id="icon-sun" style="display:none" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
         </svg>
@@ -395,21 +242,18 @@
       </button>
     </div>
 
-    <!-- Card -->
     <div class="card">
       <span class="bracket bracket-tl"></span>
       <span class="bracket bracket-tr"></span>
       <span class="bracket bracket-bl"></span>
       <span class="bracket bracket-br"></span>
 
-      <!-- Cotización divider -->
-      <div class="divider" style="margin-bottom:1.1rem">
+      <div class="divider" style="margin-top:0">
         <div class="divider-line"></div>
-        <span class="divider-text" id="div-cotiz">Cotización</span>
+        <span class="divider-text">Cotización</span>
         <div class="divider-line"></div>
       </div>
 
-      <!-- PYG Rate -->
       <div class="field">
         <div class="field-header">
           <span class="field-label">Guaraníes / USD</span>
@@ -424,7 +268,6 @@
           oninput="onRateChange('pyg', this.value)" onkeydown="handleNumericInput(event)">
       </div>
 
-      <!-- ARS Rate -->
       <div class="field">
         <div class="field-header">
           <span class="field-label">Pesos ARS / USD · Blue</span>
@@ -439,14 +282,12 @@
           oninput="onRateChange('ars', this.value)" onkeydown="handleNumericInput(event)">
       </div>
 
-      <!-- Divider -->
       <div class="divider">
         <div class="divider-line"></div>
-        <span class="divider-text" id="div-conv">Convertidor</span>
+        <span class="divider-text">Convertidor</span>
         <div class="divider-line"></div>
       </div>
 
-      <!-- PYG Amount -->
       <div class="field">
         <div class="field-header">
           <span class="field-label">Guaraníes · PYG</span>
@@ -455,7 +296,6 @@
           oninput="handlePygChange(this.value)" onkeydown="handleNumericInput(event)">
       </div>
 
-      <!-- ARS Amount -->
       <div class="field field-ars">
         <div class="field-header">
           <span class="field-label">Pesos Argentinos · ARS</span>
@@ -464,7 +304,6 @@
           oninput="handleArsChange(this.value)" onkeydown="handleNumericInput(event)">
       </div>
 
-      <!-- USD Amount -->
       <div class="field field-usd">
         <div class="field-header">
           <span class="field-label">Dólares · USD</span>
@@ -473,20 +312,16 @@
           oninput="handleUsdChange(this.value)" onkeydown="handleNumericInput(event)">
       </div>
 
-      <!-- Footer -->
       <div class="footer">
         <span>LV · made with iA and Brain</span>
         <span id="build-number">v1.0.32</span>
       </div>
     </div>
-
   </div>
 
   <script>
-    // Theme
     const html = document.documentElement
-    const saved = localStorage.getItem('theme')
-    if (saved === 'light') applyLight()
+    if (localStorage.getItem('theme') === 'light') applyLight()
 
     function applyLight() {
       html.classList.add('light')
@@ -499,16 +334,10 @@
       document.getElementById('icon-moon').style.display = 'block'
     }
     function toggleTheme() {
-      if (html.classList.contains('light')) {
-        applyDark()
-        localStorage.setItem('theme', 'dark')
-      } else {
-        applyLight()
-        localStorage.setItem('theme', 'light')
-      }
+      if (html.classList.contains('light')) { applyDark(); localStorage.setItem('theme', 'dark') }
+      else { applyLight(); localStorage.setItem('theme', 'light') }
     }
 
-    // State
     const state = {
       pygPerUsd: '', arsPerUsd: '',
       pygAmount: '', arsAmount: '', usdAmount: '',
@@ -519,7 +348,6 @@
       document.getElementById('build-number').textContent = `v1.0.${++state.buildNumber}`
     }, 30000)
 
-    // Formatters
     const fmt = (n, dec=0) => n.toLocaleString('de-DE', { minimumFractionDigits: dec, maximumFractionDigits: dec })
     const formatPYG = n => fmt(Math.round(n))
     const formatARS = n => fmt(n, 2)
@@ -576,46 +404,31 @@
     }
 
     function setLoading(id, on) {
-      const btn = document.getElementById('btn-' + id)
-      const icon = document.getElementById('icon-' + id)
-      btn.disabled = on
-      icon.classList.toggle('spinning', on)
+      document.getElementById('btn-' + id).disabled = on
+      document.getElementById('icon-' + id).classList.toggle('spinning', on)
     }
 
     async function fetchDolarBlue() {
       setLoading('ars', true)
       try {
-        const r = await fetch('https://dolarapi.com/v1/dolares/blue')
-        const d = await r.json()
-        if (d?.venta) {
-          state.arsPerUsd = d.venta.toString()
-          document.getElementById('ars-rate').value = state.arsPerUsd
-          recalculate()
-        }
-      } catch(e) { console.error(e) }
-      finally { setLoading('ars', false) }
+        const d = await fetch('https://dolarapi.com/v1/dolares/blue').then(r => r.json())
+        if (d?.venta) { state.arsPerUsd = d.venta.toString(); document.getElementById('ars-rate').value = state.arsPerUsd; recalculate() }
+      } catch(e) {} finally { setLoading('ars', false) }
     }
 
     async function fetchUSDPYG() {
       setLoading('pyg', true)
       try {
-        const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD')
-        const d = await r.json()
-        if (d?.rates?.PYG) {
-          state.pygPerUsd = Math.round(d.rates.PYG).toString()
-          document.getElementById('pyg-rate').value = state.pygPerUsd
-          recalculate()
-        }
-      } catch(e) { console.error(e) }
-      finally { setLoading('pyg', false) }
+        const d = await fetch('https://api.exchangerate-api.com/v4/latest/USD').then(r => r.json())
+        if (d?.rates?.PYG) { state.pygPerUsd = Math.round(d.rates.PYG).toString(); document.getElementById('pyg-rate').value = state.pygPerUsd; recalculate() }
+      } catch(e) {} finally { setLoading('pyg', false) }
     }
 
     function handleNumericInput(e) {
       if ([46,8,9,27,13,110,190,188].includes(e.keyCode) ||
           ((e.keyCode===65||e.keyCode===67||e.keyCode===86||e.keyCode===88) && e.ctrlKey) ||
           (e.keyCode>=35 && e.keyCode<=39)) return
-      if ((e.shiftKey || e.keyCode<48 || e.keyCode>57) && (e.keyCode<96 || e.keyCode>105))
-        e.preventDefault()
+      if ((e.shiftKey || e.keyCode<48 || e.keyCode>57) && (e.keyCode<96 || e.keyCode>105)) e.preventDefault()
     }
 
     function handlePygChange(val) {
@@ -645,10 +458,7 @@
     fetchDolarBlue()
     fetchUSDPYG()
 
-    // Registrar service worker para PWA
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js')
   </script>
 </body>
 </html>
