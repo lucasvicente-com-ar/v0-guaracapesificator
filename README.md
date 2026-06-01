@@ -3,8 +3,7 @@
 
 Convertidor de monedas en tiempo real entre **Guaraníes Paraguayos (PYG)**, **Pesos Argentinos (ARS)** y **Dólares Estadounidenses (USD)**.
 
-🌐 **Demo en vivo:** [v0-guaracapesificator.vercel.app](https://v0-guaracapesificator.vercel.app)  
-📄 **GitHub Pages:** [lucasvicente-com-ar.github.io/v0-guaracapesificator](https://lucasvicente-com-ar.github.io/v0-guaracapesificator)
+🌐 **Demo en vivo:** [lucasvicente-com-ar.github.io/guaraca-pesificator](https://lucasvicente-com-ar.github.io/guaraca-pesificator)
 
 ---
 
@@ -15,6 +14,7 @@ Convertidor de monedas en tiempo real entre **Guaraníes Paraguayos (PYG)**, **P
 - Obtiene la cotización del **dólar blue ARS** en tiempo real vía [dolarapi.com](https://dolarapi.com)
 - Formatea los Guaraníes con separador de miles mientras escribís (ej: `1.000.000`)
 - Modo oscuro / claro con preferencia guardada en el navegador
+- Instalable como app en Android e iPhone (PWA)
 
 ## Diseño
 
@@ -35,6 +35,11 @@ Un solo archivo `index.html` — sin frameworks, sin build step, sin dependencia
 | [Google Fonts – Orbitron](https://fonts.google.com) | Tipografía futurista |
 | [dolarapi.com](https://dolarapi.com/v1/dolares/blue) | Cotización dólar blue ARS |
 | [exchangerate-api.com](https://api.exchangerate-api.com/v4/latest/USD) | Tipo de cambio PYG/USD |
+
+## Instalación como app
+
+**Android (Chrome):** entrá a la URL → menú ⋮ → "Instalar app"  
+**iPhone (Safari):** entrá a la URL → botón compartir → "Agregar a pantalla de inicio"
 
 ## Uso
 
